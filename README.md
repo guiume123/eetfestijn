@@ -121,7 +121,27 @@ Dit start tegelijk de PHP-server, Vite (hot reload), en queue worker. Bezoek `ht
 ---
 
 ## 🧪 Gebruik
+### Gerechten toevoegen aan een event
 
+Gerechten worden in deze versie aangemaakt via de seeder of via Tinker, niet via de UI. Dit is een bewuste scope-keuze — de UI focust op de twee primaire flows (event-management en publieke inschrijving). Een dishes-CRUD-pagina is een logische volgende stap.
+
+**Via seeder (bulk):** pas `database/seeders/DatabaseSeeder.php` aan of voer opnieuw `php artisan migrate:fresh --seed` uit.
+
+**Via Tinker (één voor één):**
+
+```bash
+php artisan tinker
+```
+
+```php
+App\Models\Dish::create([
+    'event_id' => 1,
+    'name' => 'Stoofvlees met frieten',
+    'type' => 'hoofdgerecht',
+    'price_cents' => 1800,
+    'max_quantity' => 80,
+]);
+```
 ### Hoofdfunctionaliteit
 
 **Events-overzicht (`/events`)**
@@ -203,6 +223,7 @@ De `registration_open` accessor op het `Event` model checkt automatisch of de de
 | **CSV-export** | Penningmeester downloadt fiscaal rapport voor de boekhouding |
 | **Recurring events** | "Elke laatste zaterdag van de maand spaghetti" — patronen voor stamcafés |
 | **Allergie-rapportage** | De `notes` veld automatisch gegroepeerd zodat de kok allergieën vooraf ziet |
+| **Dishes-CRUD in admin-UI** | Coördinator voegt gerechten toe via formulier i.p.v. seeder/Tinker |
 
 Het datamodel zit fundamenteel goed — events, dishes, reservations, pivot. Daarmee kan dit doorgroeien van een "Chiro-tooltje" tot een vol platform voor het volledige Vlaamse verenigingsleven (~16.000 verenigingen).
 
