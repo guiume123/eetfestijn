@@ -2,7 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
+use App\Models\Dish;
+use App\Models\Event;
+use App\Models\Reservation;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -15,11 +17,21 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        Event::factory(4)->create()->each(function ($event) {
+            $dishes = Dish::factory(fake()->numberBetween(5, 7))
+                ->create(['event_id' => $event->id]);
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+            $reservations = Reservation::factory(fake()->numberBetween(10, 15))
+                ->create(['event_id' => $event->id]);
+
+            $reservations->each(function ($reservation) use ($dishes) {
+                $chosenDishes = $dishes->random(fake()->numberBetween(1, 3));
+                foreach ($chosenDishes as $dish) {
+                    $reservation->dishes()->attach($dish->id, [
+                        'quantity' => fake()->numberBetween(1, $reservation->number_of_people),
+                    ]);
+                }
+            });
+        });
     }
 }
